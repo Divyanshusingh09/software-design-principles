@@ -1,0 +1,289 @@
+# 🟢 Open Closed Principle (OCP)
+
+> **"Software entities should be open for extension but closed for
+> modification."**
+
+The **Open Closed Principle** states that a class or module should allow
+**new functionality to be added without changing existing code**.
+
+This helps avoid breaking already tested and stable code.
+
+------------------------------------------------------------------------
+
+# 📌 Simple Meaning
+
+    Open for Extension
+    Closed for Modification
+
+  Concept                   Meaning
+  ------------------------- ---------------------------------
+  Open for Extension        We can add new behavior
+  Closed for Modification   Existing code should not change
+
+Instead of modifying existing code, we **extend the system**.
+
+------------------------------------------------------------------------
+
+# 🎯 Why OCP is Important
+
+When software grows, requirements change frequently.
+
+If we keep modifying existing code:
+
+-   Bugs may be introduced
+-   Old functionality may break
+-   Testing becomes harder
+-   Code becomes messy
+
+OCP solves this by allowing **new features without touching existing
+code**.
+
+------------------------------------------------------------------------
+
+# ⚠️ Example Without OCP
+
+Suppose we have a class calculating discounts.
+
+``` java
+class DiscountCalculator {
+
+    double calculateDiscount(String customerType, double amount){
+
+        if(customerType.equals("REGULAR")){
+            return amount * 0.1;
+        }
+        else if(customerType.equals("PREMIUM")){
+            return amount * 0.2;
+        }
+
+        return 0;
+    }
+
+}
+```
+
+### Problem
+
+If a new customer type comes:
+
+    VIP
+    SUPER_PREMIUM
+    STUDENT
+    CORPORATE
+
+We must modify this class again and again.
+
+This violates **Open Closed Principle**.
+
+Problems:
+
+-   Continuous modification
+-   Risk of breaking logic
+-   Hard to maintain
+
+------------------------------------------------------------------------
+
+# ✅ Applying Open Closed Principle
+
+We solve this using **abstraction and polymorphism**.
+
+### Step 1 --- Create an abstraction
+
+``` java
+interface DiscountStrategy {
+
+    double applyDiscount(double amount);
+
+}
+```
+
+------------------------------------------------------------------------
+
+### Step 2 --- Create implementations
+
+``` java
+class RegularCustomerDiscount implements DiscountStrategy {
+
+    public double applyDiscount(double amount){
+        return amount * 0.1;
+    }
+
+}
+```
+
+``` java
+class PremiumCustomerDiscount implements DiscountStrategy {
+
+    public double applyDiscount(double amount){
+        return amount * 0.2;
+    }
+
+}
+```
+
+------------------------------------------------------------------------
+
+### Step 3 --- Use the abstraction
+
+``` java
+class DiscountCalculator {
+
+    double calculateDiscount(DiscountStrategy strategy, double amount){
+        return strategy.applyDiscount(amount);
+    }
+
+}
+```
+
+------------------------------------------------------------------------
+
+# 🚀 Adding New Customer Type
+
+Now suppose we add **VIP customer**.
+
+We simply create a new class.
+
+``` java
+class VipCustomerDiscount implements DiscountStrategy {
+
+    public double applyDiscount(double amount){
+        return amount * 0.3;
+    }
+
+}
+```
+
+Notice:
+
+✔ No modification in existing classes\
+✔ Only extension added
+
+This follows **Open Closed Principle**.
+
+------------------------------------------------------------------------
+
+# 📊 Design Comparison
+
+## ❌ Before OCP
+
+    DiscountCalculator
+          |
+          |--- if REGULAR
+          |--- if PREMIUM
+          |--- if VIP
+          |--- if STUDENT
+
+Continuous modification.
+
+------------------------------------------------------------------------
+
+## ✅ After OCP
+
+            DiscountStrategy
+                  |
+       -----------------------------
+       |            |              |
+    Regular     Premium         VIP
+    Discount    Discount       Discount
+
+New types can be added easily.
+
+------------------------------------------------------------------------
+
+# 💡 Real World Analogy
+
+Think about a **mobile phone charger port**.
+
+Phone manufacturers design the port so:
+
+-   New cables can be used
+-   The phone design remains unchanged
+
+You extend functionality using **different cables**.
+
+You don't redesign the phone each time.
+
+------------------------------------------------------------------------
+
+# 🧠 Benefits of OCP
+
+Following OCP provides:
+
+-   Better maintainability
+-   Reduced bugs
+-   Easy feature addition
+-   Clean architecture
+-   Reusable code
+-   Scalable systems
+
+------------------------------------------------------------------------
+
+# 🧩 How OCP is Achieved
+
+Common techniques used:
+
+  Technique              Purpose
+  ---------------------- ---------------------------------
+  Interfaces             Provide abstraction
+  Abstract Classes       Define base behavior
+  Polymorphism           Allow different implementations
+  Strategy Pattern       Replace condition logic
+  Dependency Injection   Inject behaviors dynamically
+
+------------------------------------------------------------------------
+
+# 🔗 OCP and Design Patterns
+
+Many design patterns implement OCP.
+
+Examples:
+
+-   Strategy Pattern
+-   Decorator Pattern
+-   Factory Pattern
+-   Template Method Pattern
+
+These patterns allow extending behavior without modifying existing
+classes.
+
+------------------------------------------------------------------------
+
+# 🧠 **Short Answer**
+
+> Open Closed Principle states that software entities should be open for
+> extension but closed for modification.
+
+**Extended Answer**
+
+This means we should design classes so that **new functionality can be
+added by creating new classes instead of modifying existing ones**.
+
+This is usually achieved using **interfaces, inheritance, and
+polymorphism**.
+
+------------------------------------------------------------------------
+
+# 📈 Visual Architecture Example
+
+               +-------------------+
+               | DiscountStrategy  |
+               +-------------------+
+                        |
+          ---------------------------------
+          |               |               |
+    +-------------+ +-------------+ +-------------+
+    | RegularDisc | | PremiumDisc | |   VipDisc   |
+    +-------------+ +-------------+ +-------------+
+
+Each class extends the system without modifying existing code.
+
+------------------------------------------------------------------------
+
+# 🚀 Key Takeaway
+
+When designing software:
+
+    Never modify stable code
+    Extend it instead
+
+That is the core idea of **Open Closed Principle**.
