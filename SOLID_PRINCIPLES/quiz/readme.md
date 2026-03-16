@@ -1,1 +1,2 @@
-https://divyanshusingh09.github.io/software-design-principles/SOLID_PRINCIPLES/quiz/
+
+**Link to Quiz** : https://divyanshusingh09.github.io/software-design-principles/SOLID_PRINCIPLES/quiz/
