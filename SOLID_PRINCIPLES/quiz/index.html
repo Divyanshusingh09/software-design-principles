@@ -1,1 +1,528 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOLID Principles Interactive Quiz</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(13, 24, 41, 0.88);
+      --panel2: rgba(18, 31, 52, 0.92);
+      --text: #eef4ff;
+      --muted: #9eb1cf;
+      --line: rgba(166, 184, 214, 0.15);
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --ok: #16a34a;
+      --bad: #dc2626;
+      --warn: #f59e0b;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.25), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(6, 182, 212, 0.18), transparent 22%),
+        linear-gradient(180deg, #030712 0%, #07111f 100%);
+      min-height: 100vh;
+    }
+    .wrap {
+      width: min(1150px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(17,24,39,0.9), rgba(10,18,34,0.95));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      margin-bottom: 22px;
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: #ddd6fe;
+      border: 1px solid rgba(167, 139, 250, 0.26);
+      background: rgba(124, 58, 237, 0.14);
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 4.5vw, 54px);
+      line-height: 1.03;
+    }
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      max-width: 900px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin: 18px 0 22px;
+    }
+    .stat {
+      border-radius: 22px;
+      padding: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .stat .k {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .stat .v {
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .left, .right {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search {
+      min-width: 260px;
+      background: rgba(8, 15, 28, 0.84);
+      color: var(--text);
+      border: 1px solid var(--line);
+      outline: none;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+    .btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 28px rgba(124,58,237,.28);
+    }
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(8, 15, 28, 0.84);
+      border: 1px solid var(--line);
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .chip.active {
+      color: white;
+      border-color: rgba(125,211,252,.28);
+      background: linear-gradient(135deg, rgba(124,58,237,.22), rgba(6,182,212,.18));
+    }
+    .progress {
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+      margin-bottom: 18px;
+    }
+    .progress > div {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+      transition: width .3s ease;
+    }
+    .notice {
+      border: 1px solid rgba(251,191,36,.26);
+      background: rgba(245,158,11,.08);
+      color: #fde68a;
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      line-height: 1.7;
+      display: none;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel2), rgba(10,18,34,0.96));
+      border-radius: 26px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+    }
+    .badge.topic {
+      color: #ddd6fe;
+      background: rgba(124,58,237,.14);
+      border-color: rgba(167,139,250,.22);
+    }
+    .badge.easy { color: #bbf7d0; background: rgba(22,163,74,.12); }
+    .badge.medium { color: #fde68a; background: rgba(245,158,11,.10); }
+    .badge.hard { color: #fecaca; background: rgba(220,38,38,.10); }
+    .q {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.5;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .opt {
+      position: relative;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px 14px 50px;
+      background: rgba(255,255,255,.03);
+      transition: .2s ease;
+    }
+    .opt:hover {
+      transform: translateY(-1px);
+      border-color: rgba(125,211,252,.26);
+    }
+    .opt input {
+      position: absolute;
+      left: 16px;
+      top: 17px;
+      transform: scale(1.18);
+    }
+    .opt.correct {
+      border-color: rgba(22,163,74,.42);
+      background: rgba(22,163,74,.11);
+    }
+    .opt.wrong {
+      border-color: rgba(220,38,38,.42);
+      background: rgba(220,38,38,.11);
+    }
+    .feedback {
+      margin-top: 14px;
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      line-height: 1.7;
+    }
+    .feedback.good {
+      border-color: rgba(22,163,74,.38);
+      background: rgba(22,163,74,.08);
+      color: #dcfce7;
+    }
+    .feedback.bad {
+      border-color: rgba(220,38,38,.38);
+      background: rgba(220,38,38,.08);
+    }
+    .explain {
+      margin-top: 8px;
+      color: #dbeafe;
+    }
+    .footer {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    @media (max-width: 960px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 18px, 1150px); }
+      .stats { grid-template-columns: 1fr; }
+      .search { min-width: 100%; }
+      .q { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Interactive Study Page</div>
+      <h1>SOLID Principles Master Quiz</h1>
+      <p class="sub">
+        In-depth MCQs on <strong>Coupling, Cohesion, SRP, OCP, LSP, ISP, and DIP</strong>. Select answers and click
+        <strong>Submit Quiz</strong>. Correct answers are highlighted, wrong ones show a short explanation just below that question.
+        The <strong>Refresh Page</strong> button reloads the entire page from scratch.
+      </p>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><div class="k">Total Questions</div><div class="v" id="totalCount">0</div></div>
+      <div class="stat"><div class="k">Topics</div><div class="v" id="topicCount">0</div></div>
+      <div class="stat"><div class="k">Answered</div><div class="v" id="answeredCount">0</div></div>
+      <div class="stat"><div class="k">Correct</div><div class="v" id="correctCount">--</div></div>
+      <div class="stat"><div class="k">Score %</div><div class="v" id="percentCount">--</div></div>
+    </section>
+
+    <div class="toolbar">
+      <div class="left">
+        <input id="search" class="search" type="text" placeholder="Search topic, principle, or question..." />
+      </div>
+      <div class="right">
+        <button class="btn btn-secondary" id="refreshBtn">Refresh Page</button>
+        <button class="btn btn-secondary" id="resetBtn">Reset Answers</button>
+        <button class="btn btn-primary" id="submitBtn">Submit Quiz</button>
+      </div>
+    </div>
+
+    <div class="filters" id="filters"></div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="notice" id="notice"></div>
+
+    <div class="grid" id="quiz"></div>
+
+    <div class="footer">
+      Best use case: host this file with GitHub Pages inside your SOLID folder. Then anyone opening the page link can attempt the quiz directly in the browser.
+    </div>
+  </div>
+
+  <script>
+    const data = [{"topic": "Coupling & Cohesion", "difficulty": "Medium", "question": "What is the most accurate meaning of cohesion in software design?", "options": ["The number of classes inside a package", "The degree to which elements inside a module are related", "The degree to which one class inherits another", "The number of public methods in a class"], "answer": 1, "explanation": "Cohesion measures how strongly related the responsibilities inside a module or class are. High cohesion means the class is focused and its methods belong together."}, {"topic": "Coupling & Cohesion", "difficulty": "Easy", "question": "Which combination is generally preferred in a well-designed system?", "options": ["High coupling and low cohesion", "High coupling and high cohesion", "Low coupling and high cohesion", "Low coupling and low cohesion"], "answer": 2, "explanation": "Low coupling reduces dependencies between modules, while high cohesion keeps each module focused on a clear purpose. Together they improve maintainability and scalability."}, {"topic": "Coupling & Cohesion", "difficulty": "Medium", "question": "A class named UtilityService contains methods for email, PDF generation, database backup, logging, and salary calculation. This mainly indicates:", "options": ["High cohesion", "Low cohesion", "Perfect abstraction", "Low inheritance"], "answer": 1, "explanation": "These responsibilities are unrelated, so the class has low cohesion. It is a classic sign that too many concerns have been mixed into one place."}, {"topic": "Coupling & Cohesion", "difficulty": "Hard", "question": "Which option best describes low coupling?", "options": ["One class directly creates and controls many concrete dependencies", "Modules interact through clear abstractions with minimal knowledge of internals", "All business logic is kept in one large class", "Every change in one class requires changes in many others"], "answer": 1, "explanation": "Low coupling means modules know as little as necessary about each other and communicate through stable contracts or abstractions."}, {"topic": "SRP", "difficulty": "Easy", "question": "Single Responsibility Principle says a class should have:", "options": ["Only one method", "Only one object field", "Only one reason to change", "Only one constructor"], "answer": 2, "explanation": "SRP does not mean one method or one field. It means the class should have one responsibility, or one reason to change."}, {"topic": "SRP", "difficulty": "Medium", "question": "Which class best follows SRP?", "options": ["OrderManager with createOrder(), saveToDb(), sendEmail(), generatePdf()", "InvoiceProcessor with calculateTax(), saveInvoice(), archiveLogs(), sendSMS()", "UserValidator with isEmailValid(), isPasswordStrong(), isPhoneValid()", "ReportService with createReport(), printReport(), emailReport(), syncReport()"], "answer": 2, "explanation": "All methods inside UserValidator support the same responsibility: validation. That is a focused concern, so it follows SRP."}, {"topic": "SRP", "difficulty": "Medium", "question": "What is the strongest reason to split an OrderService into OrderService, OrderRepository, and EmailService?", "options": ["To reduce the number of classes in the project", "To separate business, persistence, and notification responsibilities", "To avoid using interfaces", "To increase inheritance"], "answer": 1, "explanation": "Business logic, data persistence, and notifications are separate concerns. Splitting them gives each class one reason to change."}, {"topic": "SRP", "difficulty": "Hard", "question": "A class changes when tax rules change, database vendor changes, and PDF format changes. What does this most clearly indicate?", "options": ["It follows SRP strongly", "It has multiple reasons to change and violates SRP", "It needs more static methods", "It uses too many constructors"], "answer": 1, "explanation": "If unrelated changes from multiple areas affect the same class, the class has multiple reasons to change, which is a direct SRP violation."}, {"topic": "OCP", "difficulty": "Easy", "question": "Open Closed Principle says software entities should be:", "options": ["Open for extension but closed for modification", "Closed for extension but open for modification", "Open for modification only", "Closed for inheritance only"], "answer": 0, "explanation": "OCP means we should be able to add new behavior by extending the system, while avoiding repeated changes to stable existing code."}, {"topic": "OCP", "difficulty": "Medium", "question": "Which design best supports OCP for discount calculation?", "options": ["A single DiscountCalculator with many if-else blocks for every customer type", "A DiscountStrategy interface with separate classes for Regular, Premium, and VIP discounts", "A static utility class with switch statements", "A single controller class handling all discount types"], "answer": 1, "explanation": "Using a strategy interface allows new discount types to be added as new classes, without modifying the core calculator."}, {"topic": "OCP", "difficulty": "Medium", "question": "Why is a growing switch statement often considered a design smell related to OCP?", "options": ["Because switch is illegal in Java", "Because each new case usually requires modifying stable code", "Because switch cannot return values", "Because interfaces cannot be used with switch"], "answer": 1, "explanation": "A growing switch usually means every new feature forces edits to existing code, which is exactly what OCP tries to avoid."}, {"topic": "OCP", "difficulty": "Hard", "question": "Which statement best captures the goal of OCP in large systems?", "options": ["Never add new classes", "Put all future behavior into one generic method", "Design stable boundaries so new features can plug in with minimal risk", "Avoid abstraction because it hides implementation details"], "answer": 2, "explanation": "OCP is about designing extensible systems. Stable boundaries and abstractions let new behavior be introduced with low regression risk."}, {"topic": "LSP", "difficulty": "Easy", "question": "Liskov Substitution Principle mainly says:", "options": ["A subclass should replace the parent without breaking behavior", "A subclass should add more methods than the parent", "All subclasses must override every method", "Inheritance should be used wherever possible"], "answer": 0, "explanation": "LSP is about behavioral substitutability. Child objects should work correctly wherever parent objects are expected."}, {"topic": "LSP", "difficulty": "Medium", "question": "Why is 'Penguin extends Bird' with fly() throwing UnsupportedOperationException a common LSP violation?", "options": ["Because penguins are not birds", "Because exceptions are not allowed in subclasses", "Because the child breaks an expected parent behavior", "Because all birds must inherit from Animal instead"], "answer": 2, "explanation": "If client code expects Bird to fly, Penguin breaks that contract. The subclass is no longer safely substitutable for the parent."}, {"topic": "LSP", "difficulty": "Medium", "question": "What is the key problem in the Rectangle-Square inheritance example?", "options": ["Square is not a geometric shape", "Square changes the behavioral expectations of Rectangle setters", "Rectangle should always be abstract", "getArea() should return double instead of int"], "answer": 1, "explanation": "Client code expects width and height to vary independently for Rectangle. Square changes that behavior and breaks the parent contract."}, {"topic": "LSP", "difficulty": "Hard", "question": "Which design best helps avoid LSP violations?", "options": ["Forcing all subclasses to inherit all parent behaviors whether relevant or not", "Designing abstractions around real capabilities instead of convenient inheritance", "Using instanceof checks everywhere in client code", "Adding empty overrides in subclasses"], "answer": 1, "explanation": "LSP is easier to preserve when abstractions represent real behavioral contracts. Capability-based design often works better than forced inheritance."}, {"topic": "ISP", "difficulty": "Easy", "question": "Interface Segregation Principle says:", "options": ["Use one large interface for all clients", "Clients should not be forced to depend on methods they do not use", "Every class should implement at least two interfaces", "Interfaces should contain only default methods"], "answer": 1, "explanation": "ISP promotes small, focused interfaces so classes only implement the behavior they actually need."}, {"topic": "ISP", "difficulty": "Medium", "question": "Which is the best example of ISP?", "options": ["Machine interface with print(), scan(), fax() used by all devices", "Separate Printer, Scanner, and Fax interfaces", "One Worker interface with work(), eat(), sleep() for humans and robots", "One universal interface for every employee role"], "answer": 1, "explanation": "Small role-based interfaces are the essence of ISP. A class should not implement methods irrelevant to its behavior."}, {"topic": "ISP", "difficulty": "Medium", "question": "If a class throws UnsupportedOperationException for interface methods it does not need, what is the likely issue?", "options": ["The interface is too large and likely violates ISP", "The class follows ISP perfectly", "The class needs more inheritance", "The method should be static"], "answer": 0, "explanation": "Unsupported operations often indicate the interface forces behavior that does not apply to the implementing class."}, {"topic": "ISP", "difficulty": "Hard", "question": "Why does ISP often improve testability?", "options": ["Because big interfaces are easier to mock", "Because smaller interfaces reduce the amount of irrelevant behavior a test must care about", "Because ISP removes the need for abstractions", "Because all interfaces become abstract classes"], "answer": 1, "explanation": "Focused interfaces are easier to mock, understand, and test because they expose only the behavior needed by the client."}, {"topic": "DIP", "difficulty": "Easy", "question": "Dependency Inversion Principle says high-level modules should depend on:", "options": ["Concrete classes", "Low-level modules directly", "Abstractions", "Framework internals"], "answer": 2, "explanation": "DIP says both high-level and low-level modules should depend on abstractions, not on concrete implementations."}, {"topic": "DIP", "difficulty": "Medium", "question": "Which design best follows DIP?", "options": ["OrderService directly creates MySQLDatabase", "OrderService depends on Database interface injected through constructor", "OrderService imports every DB class and chooses one with if-else", "OrderService writes SQL and business logic together"], "answer": 1, "explanation": "Constructor injection through an interface keeps the high-level service independent of low-level database details."}, {"topic": "DIP", "difficulty": "Medium", "question": "What is the main benefit of making OrderService depend on a Database interface instead of MySQLDatabase directly?", "options": ["It prevents interfaces from being used later", "It makes changing implementations easier and reduces coupling", "It removes the need for testing", "It guarantees better performance"], "answer": 1, "explanation": "Depending on an abstraction decouples the service from a specific vendor implementation and makes replacement and testing easier."}, {"topic": "DIP", "difficulty": "Hard", "question": "How does DIP support unit testing?", "options": ["It removes all dependencies from the system", "It allows mocks or stubs to be supplied in place of real implementations", "It ensures all methods become static", "It eliminates the need for interfaces in test code"], "answer": 1, "explanation": "When code depends on abstractions, tests can provide mock implementations instead of real databases, mailers, or external services."}];
+    const answers = {};
+    let activeTopic = "All";
+    let submitted = false;
+
+    const topics = ["All", ...new Set(data.map(q => q.topic))];
+    const quizEl = document.getElementById("quiz");
+    const filtersEl = document.getElementById("filters");
+    const searchEl = document.getElementById("search");
+    const progressBar = document.getElementById("progressBar");
+    const totalCount = document.getElementById("totalCount");
+    const topicCount = document.getElementById("topicCount");
+    const answeredCount = document.getElementById("answeredCount");
+    const correctCount = document.getElementById("correctCount");
+    const percentCount = document.getElementById("percentCount");
+    const notice = document.getElementById("notice");
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function filteredData() {
+      const term = searchEl.value.trim().toLowerCase();
+      return data.filter(q => {
+        const byTopic = activeTopic === "All" || q.topic === activeTopic;
+        const hay = (q.topic + " " + q.difficulty + " " + q.question + " " + q.options.join(" ")).toLowerCase();
+        const bySearch = !term || hay.includes(term);
+        return byTopic && bySearch;
+      });
+    }
+
+    function renderFilters() {
+      filtersEl.innerHTML = "";
+      topics.forEach(topic => {
+        const btn = document.createElement("button");
+        btn.className = "chip" + (topic === activeTopic ? " active" : "");
+        btn.textContent = topic;
+        btn.onclick = () => {
+          activeTopic = topic;
+          renderFilters();
+          renderQuiz();
+        };
+        filtersEl.appendChild(btn);
+      });
+    }
+
+    function optionClass(qIndex, optIndex, q) {
+      if (!submitted) return "opt";
+      if (optIndex === q.answer) return "opt correct";
+      if (answers[qIndex] === optIndex && optIndex !== q.answer) return "opt wrong";
+      return "opt";
+    }
+
+    function feedbackHtml(qIndex, q) {
+      if (!submitted) return "";
+      const selected = answers[qIndex];
+      if (selected === undefined) {
+        return `
+          <div class="feedback bad">
+            <strong>Not answered.</strong>
+            <div class="explain"><strong>Correct answer:</strong> ${escapeHtml(q.options[q.answer])}<br>${escapeHtml(q.explanation)}</div>
+          </div>
+        `;
+      }
+      if (selected === q.answer) {
+        return `
+          <div class="feedback good">
+            <strong>Correct.</strong>
+          </div>
+        `;
+      }
+      return `
+        <div class="feedback bad">
+          <strong>Incorrect.</strong>
+          <div class="explain"><strong>Correct answer:</strong> ${escapeHtml(q.options[q.answer])}<br>${escapeHtml(q.explanation)}</div>
+        </div>
+      `;
+    }
+
+    function updateStats() {
+      totalCount.textContent = data.length;
+      topicCount.textContent = topics.length - 1;
+
+      const answered = Object.keys(answers).filter(k => answers[k] !== undefined).length;
+      answeredCount.textContent = answered;
+      progressBar.style.width = `${Math.round((answered / data.length) * 100)}%`;
+
+      if (submitted) {
+        let correct = 0;
+        data.forEach((q, i) => {
+          if (answers[i] === q.answer) correct++;
+        });
+        correctCount.textContent = correct;
+        percentCount.textContent = Math.round((correct / data.length) * 100) + "%";
+      } else {
+        correctCount.textContent = "--";
+        percentCount.textContent = "--";
+      }
+    }
+
+    function renderQuiz() {
+      const list = filteredData();
+      quizEl.innerHTML = "";
+
+      if (!list.length) {
+        quizEl.innerHTML = `
+          <div class="card">
+            <div class="meta"><span class="badge">No Results</span></div>
+            <h3 class="q">No questions matched your current search or topic filter.</h3>
+          </div>
+        `;
+        updateStats();
+        return;
+      }
+
+      list.forEach(q => {
+        const index = data.indexOf(q);
+        const selected = answers[index];
+        const level = q.difficulty.toLowerCase();
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="meta">
+            <span class="badge topic">${escapeHtml(q.topic)}</span>
+            <span class="badge ${level}">${escapeHtml(q.difficulty)}</span>
+            <span class="badge">Q${index + 1}</span>
+          </div>
+          <h3 class="q">${escapeHtml(q.question)}</h3>
+          <div class="options">
+            ${
+              q.options.map((opt, optIndex) => `
+                <label class="${optionClass(index, optIndex, q)}">
+                  <input type="radio" name="q-${index}" ${selected === optIndex ? "checked" : ""} ${submitted ? "disabled" : ""}>
+                  <span>${escapeHtml(opt)}</span>
+                </label>
+              `).join("")
+            }
+          </div>
+          ${feedbackHtml(index, q)}
+        `;
+
+        card.querySelectorAll(`input[name="q-${index}"]`).forEach((radio, optIndex) => {
+          radio.addEventListener("change", () => {
+            answers[index] = optIndex;
+            updateStats();
+          });
+        });
+
+        quizEl.appendChild(card);
+      });
+
+      updateStats();
+    }
+
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      submitted = true;
+      renderQuiz();
+
+      let wrong = 0;
+      data.forEach((q, i) => {
+        if (answers[i] !== q.answer) wrong++;
+      });
+
+      notice.style.display = "block";
+      notice.innerHTML = wrong === 0
+        ? "<strong>Excellent.</strong> You answered all questions correctly."
+        : `<strong>Submitted.</strong> You have ${wrong} wrong / unanswered question(s). Each incorrect question now shows the correct answer and a short explanation below it.`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      submitted = false;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      notice.style.display = "none";
+      renderQuiz();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    searchEl.addEventListener("input", renderQuiz);
+
+    renderFilters();
+    renderQuiz();
+  </script>
+</body>
+</html>
